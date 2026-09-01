@@ -1,6 +1,6 @@
-# Prologics — builds
+# Sonomy — builds
 
-Signed builds of Prologics. **Binaries only; no source code lives here.**
+Signed builds of Sonomy. **Binaries only; no source code lives here.**
 
 Everything is published as a [release asset](../../releases/latest) — nothing is
 committed to this repository's history, so a clone is a few kilobytes.
@@ -21,7 +21,7 @@ friends inside the app itself, which is where the app is meant to get it.
 ## Every asset is signed
 
 An update is described by a manifest — every file, its size and its SHA-256 —
-and the manifest is signed with the Prologics release key. The app carries the
+and the manifest is signed with the Sonomy release key. The app carries the
 public half and refuses anything the key did not sign, whether it arrived from
 this repository or from a friend. A friend can pass along a genuine build or
 nothing at all; nobody but the release key can author one.
