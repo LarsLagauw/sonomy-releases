@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonomy Notes — notes and meetings that stay on your machines</title>
+<meta name="description" content="Notes and meetings for macOS, Windows and Linux. Peer to peer, on-device transcription, no server in the middle. You only download it once.">
+
+<meta property="og:title" content="Sonomy Notes">
+<meta property="og:description" content="You only download this once. Every copy after it arrives from a friend over the local network.">
+<meta property="og:image" content="assets/summit.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/summit.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ───────────────────────────────────────────────────────────────
+   Sonomy Notes — landing page
+
+   The page is a descent. Above the dashed line it is snow and
+   daylight: the part of the app that has a window. Below the line
+   the light goes out, because the engine does not have one.
+   ─────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Sampled out of the icon artwork. */
+  --sky-deep:  #0B6FC4;
+  --sky:       #1E8AD7;
+  --haze:      #A6E3F7;
+  --snow:      #F4F9FC;
+  --snow-edge: #DDE9F1;
+
+  --rock:      #1D3145;
+  --rock-deep: #142230;
+  --bedrock:   #0B141D;
+
+  --ink:       #10202E;
+  --ink-soft:  #47637A;
+  --frost:     #E8F2F8;
+  --frost-soft:#9DB6C9;
+
+  /* The one warm thing at altitude. Used in three places, no more. */
+  --alpenglow: #FF8A5B;
+
+  --display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --gut: clamp(20px, 5vw, 64px);
+  --measure: 1180px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--bedrock);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--alpenglow);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+}
+
+/* ── Fine grain. Masks the upscale of a 1100px photograph on a
+      2560px display, and gives the flat sky some tooth. ────────── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: .32;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* ── Top bar ─────────────────────────────────────────────────── */
+.bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  transition: background-color .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+  border-bottom: 1px solid transparent;
+}
+.bar.is-stuck {
+  background: rgba(11, 20, 29, .72);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom-color: rgba(232, 242, 248, .10);
+}
+.bar__in {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 62px;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+}
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+.mark img { width: 26px; height: 26px; border-radius: 7px; }
+.mark span {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 112;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: .01em;
+}
+.bar__spacer { flex: 1; }
+.tag {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .02em;
+  color: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.bar__cta {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.bar.is-stuck .bar__cta { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  text-decoration: none;
+  padding: 15px 24px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--snow);
+  color: var(--ink);
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+  box-shadow: 0 10px 34px -14px rgba(6, 32, 54, .8);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 18px 44px -16px rgba(6, 32, 54, .9); }
+.btn:active { transform: translateY(0); }
+.btn svg { width: 15px; height: 15px; flex: none; }
+.btn--sm { padding: 9px 16px; font-size: 13.5px; }
+.btn--ghost {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, .3);
+  box-shadow: none;
+}
+.btn--ghost:hover { background: rgba(255, 255, 255, .1); box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn:hover { transform: none; }
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: min(96vh, 940px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--sky) url("assets/summit.jpg") 50% 26% / cover no-repeat;
+  isolation: isolate;
+}
+/* Photograph drifts back to rest once, on load. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -2%;
+  z-index: -2;
+  background: inherit;
+  animation: settle 2.6s cubic-bezier(.16, .84, .34, 1) both;
+}
+@keyframes settle {
+  from { transform: scale(1.07); }
+  to   { transform: scale(1); }
+}
+/* Scrim. Weighted to the left, where the type is, so the right half
+   keeps the photograph's own cyan instead of going grey under a
+   full-width wash. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    /* Pool of shade over the lede and the button, which sit low and
+       left against the brightest snow in the picture. */
+    radial-gradient(118% 82% at 4% 80%,
+      rgba(4, 30, 54, .74) 0%,
+      rgba(4, 30, 54, .40) 40%,
+      rgba(4, 30, 54, 0) 70%),
+    linear-gradient(96deg,
+      rgba(4, 30, 54, .84) 0%,
+      rgba(4, 30, 54, .60) 26%,
+      rgba(4, 30, 54, .26) 48%,
+      rgba(4, 30, 54, .04) 70%,
+      rgba(4, 30, 54, 0) 84%),
+    linear-gradient(180deg, rgba(4, 30, 54, .46) 0%, rgba(4, 30, 54, 0) 22%),
+    linear-gradient(180deg, rgba(244, 249, 252, 0) 84%, var(--snow) 100%);
+}
+/* Stacked layout: the type sits over the middle of the picture, so the
+   scrim has to come up from the bottom instead of in from the side. */
+@media (max-width: 780px) {
+  .hero::after {
+    background:
+      linear-gradient(180deg,
+        rgba(4, 30, 54, .58) 0%,
+        rgba(4, 30, 54, .30) 34%,
+        rgba(4, 30, 54, .62) 68%,
+        rgba(4, 30, 54, .80) 88%),
+      linear-gradient(180deg, rgba(244, 249, 252, 0) 92%, var(--snow) 100%);
+  }
+}
+.hero__in {
+  position: relative;
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding: 140px var(--gut) clamp(56px, 9vh, 104px);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(232, 242, 248, .82);
+  margin: 0 0 22px;
+}
+
+h1 {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 118;
+  font-weight: 700;
+  font-size: clamp(42px, 8.2vw, 108px);
+  line-height: .94;
+  letter-spacing: -.025em;
+  color: #fff;
+  margin: 0 0 26px;
+  max-width: 15ch;
+  text-wrap: balance;
+  text-shadow: 0 2px 40px rgba(4, 28, 48, .45);
+}
+h1 .line { display: block; overflow: hidden; }
+h1 .line > span {
+  display: block;
+  animation: rise .9s cubic-bezier(.2, .8, .25, 1) both;
+}
+h1 .line:nth-child(2) > span { animation-delay: .08s; }
+h1 .line:nth-child(3) > span { animation-delay: .16s; }
+@keyframes rise {
+  from { transform: translateY(105%); }
+  to   { transform: none; }
+}
+
+.hero__lede {
+  font-size: clamp(16px, 1.6vw, 19px);
+  line-height: 1.5;
+  color: rgba(240, 248, 252, .93);
+  max-width: 40ch;
+  margin: 0 0 34px;
+  text-shadow: 0 1px 22px rgba(4, 28, 48, .5);
+  animation: fade .9s ease .3s both;
+}
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  animation: fade .9s ease .42s both;
+}
+.hero__meta {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: rgba(232, 242, 248, .8);
+}
+.hero__meta a { color: #fff; text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before, h1 .line > span, .hero__lede, .hero__actions { animation: none; }
+  .hero::before { transform: none; }
+}
+
+/* ── Strata ──────────────────────────────────────────────────── */
+.strata { background: var(--snow); }
+
+.layer {
+  position: relative;
+  padding-block: clamp(52px, 7vw, 84px);
+}
+.layer__in {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+
+/* The rail: a hairline down the left with a tick at each layer. */
+.layer__rail {
+  position: relative;
+  padding-left: 22px;
+  min-height: 100%;
+}
+.layer__rail::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 8px; bottom: calc(-1 * clamp(52px, 7vw, 84px) * 2);
+  width: 1px;
+  background: currentColor;
+  opacity: .22;
+}
+.layer:last-of-type .layer__rail::before { bottom: 0; }
+.layer__rail::after {
+  content: "";
+  position: absolute;
+  left: -5px; top: 8px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background: var(--snow);
+  opacity: .5;
+}
+.layer__name {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 108;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+.layer__note {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.layer__lede {
+  font-size: clamp(19px, 2.3vw, 27px);
+  line-height: 1.32;
+  letter-spacing: -.015em;
+  font-weight: 500;
+  margin: 0 0 26px;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+/* ── Keyword chips ───────────────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.chips li {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.25;
+  padding: 7px 13px;
+  border-radius: 7px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.chips li { opacity: 0; transform: translateY(8px); }
+.chips.is-in li {
+  animation: chip .5s cubic-bezier(.2, .8, .3, 1) both;
+  animation-delay: calc(var(--i) * 22ms);
+}
+@keyframes chip { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .chips li { opacity: 1; transform: none; }
+  .chips.is-in li { animation: none; }
+}
+
+/* Light strata */
+.layer--light { color: var(--ink); }
+.layer--light .layer__rail { color: #3D5871; }
+.layer--light .chips li {
+  border-color: rgba(16, 32, 46, .16);
+  background: rgba(255, 255, 255, .8);
+  color: #24425A;
+}
+
+/* Dark strata */
+.layer--dark { color: var(--frost); }
+.layer--dark .layer__rail { color: var(--frost-soft); }
+.layer--dark .layer__rail::after { background: transparent; }
+.layer--dark .chips li {
+  border-color: rgba(232, 242, 248, .17);
+  background: rgba(232, 242, 248, .05);
+  color: rgba(232, 242, 248, .88);
+}
+.layer--dark .layer__lede { color: #fff; }
+
+/* The descent. Each band sits a step deeper than the one above. */
+.band-1 { background: var(--rock); }
+.band-2 { background: linear-gradient(180deg, var(--rock), var(--rock-deep)); }
+.band-3 { background: var(--rock-deep); }
+.band-4 { background: linear-gradient(180deg, var(--rock-deep), var(--bedrock)); }
+
+/* ── The dashed line. The one moment on the page. ────────────── */
+/* The band where the daylight runs out. The rule is drawn near the top
+   of it and the ground goes dark underneath — which is the claim the
+   label is making, made literally. */
+.divide {
+  background: linear-gradient(180deg,
+    var(--snow) 0%, var(--snow) 52%, var(--rock) 100%);
+  padding: clamp(40px, 5.5vw, 72px) 0 clamp(76px, 10vw, 128px);
+}
+.divide__in {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+  position: relative;
+}
+.divide__label {
+  margin: 0 0 12px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .55s ease .45s, transform .55s ease .45s;
+}
+.divide.is-in .divide__label { opacity: 1; transform: none; }
+.divide__label b { color: var(--ink); font-weight: 500; }
+.divide__rule {
+  height: 0;
+  border-top: 1px dashed rgba(71, 99, 122, .75);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.1s cubic-bezier(.22, .75, .2, 1);
+}
+.divide.is-in .divide__rule { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .divide__rule { transform: scaleX(1); }
+  .divide__label { opacity: 1; transform: none; }
+}
+
+/* ── Closing download block ──────────────────────────────────── */
+.close {
+  background: var(--bedrock);
+  color: var(--frost);
+  padding-block: clamp(64px, 9vw, 112px);
+  border-top: 1px solid rgba(232, 242, 248, .07);
+}
+.close h2 {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 116;
+  font-weight: 700;
+  font-size: clamp(30px, 4.6vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  color: #fff;
+  margin: 0 0 16px;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+/* Scoped to the intro on purpose: a bare `.close p` also matches the
+   two paragraphs inside every platform row and wins on specificity. */
+.close__lede {
+  color: rgba(232, 242, 248, .68);
+  max-width: 52ch;
+  margin: 0 0 38px;
+  font-size: 16px;
+}
+
+/* Platform table — the three real filenames. */
+.plats {
+  display: grid;
+  gap: 1px;
+  background: rgba(232, 242, 248, .1);
+  border: 1px solid rgba(232, 242, 248, .1);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 0 34px;
+}
+.plat {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 17px 20px;
+  background: var(--bedrock);
+  text-decoration: none;
+  transition: background-color .2s ease;
+}
+.plat:hover { background: #101d29; }
+.plat__os {
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  margin: 0 0 3px;
+}
+.plat__file {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(232, 242, 248, .5);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.plat__go {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--alpenglow);
+  white-space: nowrap;
+}
+.plat--none .plat__os { color: rgba(232, 242, 248, .58); }
+.plat--none .plat__go { color: rgba(232, 242, 248, .42); }
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(232, 242, 248, .42);
+  padding-top: 28px;
+  border-top: 1px solid rgba(232, 242, 248, .08);
+}
+.foot a { color: rgba(232, 242, 248, .72); text-underline-offset: 3px; }
+.foot a:hover { color: #fff; }
+
+/* ── Narrow ──────────────────────────────────────────────────── */
+@media (max-width: 780px) {
+  .layer__in { grid-template-columns: 1fr; gap: 18px; }
+  .layer__rail { padding-left: 20px; }
+  .layer__rail::before { bottom: -18px; }
+  .layer:last-of-type .layer__rail::before { bottom: -18px; }
+  .plat { grid-template-columns: 1fr; }
+  .plat__go { justify-self: start; }
+  .tag { display: none; }
+  h1 { max-width: 100%; }
+  .eyebrow { font-size: 11px; letter-spacing: .12em; }
+}
+@media (max-width: 420px) {
+  .chips li { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="bar" id="bar">
+  <div class="bar__in">
+    <a class="mark" href="#top">
+      <img src="assets/icon.png" alt="" width="26" height="26">
+      <span>Sonomy&nbsp;Notes</span>
+    </a>
+    <div class="bar__spacer"></div>
+    <span class="tag" id="tag-version">2.0.4-beta</span>
+    <a class="btn btn--sm bar__cta" id="cta-bar" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">Download</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ── Hero ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__in">
+      <p class="eyebrow">Sonomy Notes — for macOS, Windows and Linux</p>
+      <h1>
+        <span class="line"><span>You only</span></span>
+        <span class="line"><span>download this</span></span>
+        <span class="line"><span>once.</span></span>
+      </h1>
+      <p class="hero__lede">
+        Notes, pages and recorded meetings that live in your own folder.
+        Every copy after this one arrives from a friend over the local
+        network and installs itself — there is no server in the middle,
+        and nothing to sign up for.
+      </p>
+      <div class="hero__actions">
+        <a class="btn" id="cta-main" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 1.5v9m0 0 3.2-3.2M8 10.5 4.8 7.3M2 12v1.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V12"/>
+          </svg>
+          <span id="cta-main-label">Download the latest version</span>
+        </a>
+        <span class="hero__meta" id="cta-note">
+          <a href="#get">All three platforms</a>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <div class="strata">
+
+    <!-- ── Above the line: the part with a window ──────────── -->
+    <section class="layer layer--light" aria-labelledby="l-writing">
+      <div class="layer__in">
+        <div class="layer__rail">
+          <h2 class="layer__name" id="l-writing">Writing</h2>
+          <p class="layer__note">What you see and touch</p>
+        </div>
+        <div>
+          <p class="layer__lede">A page is a markdown file in a folder you chose.</p>
+          <ul class="chips">
+            <li>Block editor</li>
+            <li>Markdown on disk</li>
+            <li>Slash menu</li>
+            <li>Inline formatting</li>
+            <li>Tables</li>
+            <li>Columns</li>
+            <li>Cards</li>
+            <li>Footnotes</li>
+            <li>Formulas</li>
+            <li>Meeting boxes</li>
+            <li>Drag a block</li>
+            <li>Undo, exactly</li>
+            <li>IME</li>
+            <li>Paste HTML as markdown</li>
+            <li>Paste an image, get AVIF</li>
+            <li>Split panes</li>
+            <li>Page tree</li>
+            <li>Per-pane history</li>
+            <li>Density tiers</li>
+            <li>Import markdown</li>
+            <li>Export</li>
+            <li>Open a plain folder, change nothing</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── The line ────────────────────────────────────────── -->
+    <section class="divide" id="divide">
+      <div class="divide__in">
+        <p class="divide__label"><b>Below this line, nothing has a window.</b> The engine
+          is a library — it runs with no interface at all, which is how any of
+          it can be tested against the Mac app it has to match.</p>
+        <div class="divide__rule" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ── Below the line: the engine ──────────────────────── -->
+    <section class="layer layer--dark band-1" aria-labelledby="l-meetings">
+      <div class="layer__in">
+        <div class="layer__rail">
+          <h2 class="layer__name" id="l-meetings">Meetings</h2>
+          <p class="layer__note">Recorded, transcribed, on this machine</p>
+        </div>
+        <div>
+          <p class="layer__lede">Record the room and the call at once, and read it back by speaker.</p>
+          <ul class="chips">
+            <li>Record the microphone</li>
+            <li>Capture system audio</li>
+            <li>One mixed file</li>
+            <li>Speech to text, on device</li>
+            <li>Speaker-attributed transcript</li>
+            <li>Word-level timings</li>
+            <li>Two-model diarization</li>
+            <li>No Python</li>
+            <li>No virtualenv</li>
+            <li>Nothing to install</li>
+            <li>CoreML</li>
+            <li>CUDA</li>
+            <li>DirectML</li>
+            <li>ROCm</li>
+            <li>Cancel mid-run</li>
+            <li>Survives a force quit</li>
+            <li>Import existing audio</li>
+            <li>AI summary, opt in</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="layer layer--dark band-2" aria-labelledby="l-search">
+      <div class="layer__in">
+        <div class="layer__rail">
+          <h2 class="layer__name" id="l-search">Search</h2>
+          <p class="layer__note">Meaning, not just matches</p>
+        </div>
+        <div>
+          <p class="layer__lede">Find the page you meant, in any language you wrote it in.</p>
+          <ul class="chips">
+            <li>Semantic search</li>
+            <li>Runs on device</li>
+            <li>Multilingual</li>
+            <li>Index never leaves</li>
+            <li>Never synced</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="layer layer--dark band-3" aria-labelledby="l-network">
+      <div class="layer__in">
+        <div class="layer__rail">
+          <h2 class="layer__name" id="l-network">Sharing</h2>
+          <p class="layer__note">Machine to machine, four ways down</p>
+        </div>
+        <div>
+          <p class="layer__lede">If there is any path between two machines, it will find it.</p>
+          <ul class="chips">
+            <li>Peer to peer</li>
+            <li>No server</li>
+            <li>Finds peers on the LAN</li>
+            <li>Reaches off the LAN</li>
+            <li>Bluetooth LE in the same room</li>
+            <li>Mac-to-Mac direct radio</li>
+            <li>Relayed through a third machine</li>
+            <li>Picks the fastest path</li>
+            <li>Two-way page sync</li>
+            <li>Project sync</li>
+            <li>Three-way merge, per block</li>
+            <li>Live co-editing</li>
+            <li>Character by character</li>
+            <li>Talks to the Quosys Mac app</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="layer layer--dark band-4" aria-labelledby="l-trust">
+      <div class="layer__in">
+        <div class="layer__rail">
+          <h2 class="layer__name" id="l-trust">Trust</h2>
+          <p class="layer__note">Who you are, who may read it</p>
+        </div>
+        <div>
+          <p class="layer__lede">Permission is a signed grant, so taking it back travels too.</p>
+          <ul class="chips">
+            <li>End-to-end encrypted</li>
+            <li>Ed25519</li>
+            <li>X25519</li>
+            <li>ChaChaPoly</li>
+            <li>HKDF-SHA256</li>
+            <li>Signed permission grants</li>
+            <li>Revocation cascades</li>
+            <li>Re-share caps</li>
+            <li>Invites</li>
+            <li>Link your own devices</li>
+            <li>Friends and roles</li>
+            <li>Notices</li>
+            <li>Avatars</li>
+            <li>Updates from a friend</li>
+            <li>Signed builds only</li>
+            <li>Never the wrong OS</li>
+            <li>Signed WebAssembly extensions</li>
+            <li>Extension output stays readable</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── Get it ───────────────────────────────────────────── -->
+  <section class="close" id="get">
+    <div class="wrap">
+      <h2>Take the first copy.</h2>
+      <p class="close__lede">
+        Written in Rust, one binary per platform, drawn through the system
+        webview so it looks the same everywhere. Your notes stay markdown
+        files in your folder, readable without this app.
+      </p>
+
+      <div class="plats" id="plats">
+        <a class="plat" data-os="macos" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+          <div>
+            <p class="plat__os">macOS</p>
+            <p class="plat__file" data-file>Disk image — drag it to Applications</p>
+          </div>
+          <span class="plat__go">Download →</span>
+        </a>
+        <a class="plat" data-os="windows" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+          <div>
+            <p class="plat__os">Windows</p>
+            <p class="plat__file" data-file>Installer — no administrator password</p>
+          </div>
+          <span class="plat__go">Download →</span>
+        </a>
+        <a class="plat" data-os="linux" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+          <div>
+            <p class="plat__os">Linux</p>
+            <p class="plat__file" data-file>AppImage — chmod +x it and run it</p>
+          </div>
+          <span class="plat__go">Download →</span>
+        </a>
+      </div>
+
+      <div class="foot">
+        <span>Sonomy Notes <span id="foot-version">2.0.4-beta</span> — beta</span>
+        <a href="https://github.com/LarsLagauw/sonomy-releases/releases">All releases</a>
+        <a href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">Release notes</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var REPO = 'LarsLagauw/sonomy-releases';
+  var RELEASES = 'https://github.com/' + REPO + '/releases/latest';
+
+  /* ── Sticky bar ──────────────────────────────────────────── */
+  var bar = document.getElementById('bar');
+  var onScroll = function () {
+    bar.classList.toggle('is-stuck', window.scrollY > 40);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── Reveal on scroll ────────────────────────────────────── */
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.chips').forEach(function (list) {
+    Array.prototype.forEach.call(list.children, function (li, i) {
+      li.style.setProperty('--i', i);
+    });
+  });
+
+  if (!reduced && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+
+    document.querySelectorAll('.chips, .divide').forEach(function (el) {
+      io.observe(el);
+    });
+  } else {
+    document.querySelectorAll('.chips, .divide').forEach(function (el) {
+      el.classList.add('is-in');
+    });
+  }
+
+  /* ── Which build is this visitor after? ──────────────────── */
+  function detect() {
+    var ua = navigator.userAgent;
+    var p = (navigator.userAgentData && navigator.userAgentData.platform) ||
+            navigator.platform || '';
+    if (/Android/i.test(ua)) return null;
+    if (/iPhone|iPad|iPod/i.test(ua)) return null;
+    if (/Win/i.test(p) || /Windows/i.test(ua)) return 'windows';
+    if (/Mac/i.test(p) || /Mac OS X/i.test(ua)) return 'macos';
+    if (/Linux|X11/i.test(p) || /Linux/i.test(ua)) return 'linux';
+    return null;
+  }
+
+  var LABEL = { macos: 'macOS', windows: 'Windows', linux: 'Linux' };
+
+  /* Apple silicon is not reported anywhere reliable, so it is asked
+     of the GPU string and quietly defaulted to arm64 when unknown —
+     an Intel Mac still gets its own row in the table below. */
+  function macIsArm() {
+    try {
+      var c = document.createElement('canvas');
+      var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+      if (!gl) return true;
+      var ext = gl.getExtension('WEBGL_debug_renderer_info');
+      if (!ext) return true;
+      var r = String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '');
+      if (/Apple/i.test(r) && !/Intel|AMD|Radeon/i.test(r)) return true;
+      if (/Intel|AMD|Radeon/i.test(r)) return false;
+      return true;
+    } catch (err) {
+      return true;
+    }
+  }
+
+  function pick(assets, os) {
+    var arm = os === 'macos' ? macIsArm() : false;
+    var tests = {
+      macos: arm
+        ? [/-macos-arm64\.dmg$/i, /-macos-.*\.dmg$/i]
+        : [/-macos-x86_64\.dmg$/i, /-macos-.*\.dmg$/i],
+      windows: [/-x86_64-setup\.exe$/i, /setup\.exe$/i, /\.exe$/i],
+      linux: [/\.AppImage$/i]
+    }[os] || [];
+
+    for (var t = 0; t < tests.length; t++) {
+      for (var a = 0; a < assets.length; a++) {
+        if (tests[t].test(assets[a].name)) return assets[a];
+      }
+    }
+    return null;
+  }
+
+  function mb(bytes) {
+    return Math.round(bytes / 1048576) + ' MB';
+  }
+
+  var os = detect();
+  var main = document.getElementById('cta-main');
+  var mainLabel = document.getElementById('cta-main-label');
+  var note = document.getElementById('cta-note');
+
+  if (os) {
+    mainLabel.textContent = 'Download for ' + LABEL[os];
+  }
+
+  /* The API call is a nicety: it fills in the version, the size and a
+     direct link. Every button already points at the releases page, so
+     a rate limit, an offline visitor or a repo with no published
+     release costs the page nothing. */
+  fetch('https://api.github.com/repos/' + REPO + '/releases/latest', {
+    headers: { Accept: 'application/vnd.github+json' }
+  })
+    .then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function (rel) {
+      var version = (rel.tag_name || rel.name || '').replace(/^v/, '');
+      var assets = rel.assets || [];
+
+      if (version) {
+        document.getElementById('tag-version').textContent = version;
+        document.getElementById('foot-version').textContent = version;
+      }
+
+      document.querySelectorAll('.plat').forEach(function (row) {
+        var found = pick(assets, row.getAttribute('data-os'));
+        var file = row.querySelector('[data-file]');
+        var go = row.querySelector('.plat__go');
+        if (found) {
+          row.href = found.browser_download_url;
+          file.textContent = found.name + ' · ' + mb(found.size);
+        } else {
+          /* A release need not carry every platform. Saying so is better
+             than showing a filename that is not in it. */
+          row.classList.add('plat--none');
+          file.textContent = 'Not in ' + (version || 'this release');
+          go.textContent = 'See all releases →';
+        }
+      });
+
+      if (os) {
+        var asset = pick(assets, os);
+        if (asset) {
+          main.href = asset.browser_download_url;
+          document.getElementById('cta-bar').href = asset.browser_download_url;
+          note.innerHTML = '';
+          note.appendChild(document.createTextNode(
+            version + ' · ' + mb(asset.size) + ' · '
+          ));
+          var all = document.createElement('a');
+          all.href = '#get';
+          all.textContent = 'other platforms';
+          note.appendChild(all);
+        }
+      }
+    })
+    .catch(function () {
+      /* Links stay on the releases page, which is always correct. */
+      if (main.href !== RELEASES) main.href = RELEASES;
+    });
+})();
+</script>
+
+</body>
+</html>
