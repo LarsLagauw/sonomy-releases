@@ -246,7 +246,7 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
   to   { opacity: 1; }
 }
 .shot-fade {
-  position: absolute; left: 0; right: 0; bottom: -2px; height: 46%; z-index: 3; pointer-events: none;
+  position: absolute; left: calc(50% - 50vw); right: calc(50% - 50vw); bottom: -2px; height: 46%; z-index: 3; pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 78%);
 }
 .hero-tail { height: clamp(40px, 6vw, 90px); background: #fff; }
