@@ -24,16 +24,20 @@
 
 <style>
 /* ---- a plain hero: white, ink type, the window underneath ---- */
-.hero.plain { background: #fff; color: var(--ink); padding-top: 150px; }
+.hero.plain { --range-top: clamp(20px, 4vw, 56px); color: var(--ink); padding-top: 150px; }
+/* The window stands in front of the range: the summit shows above it, the sea
+   of cloud at its sides. */
+.hero.plain .range { margin-bottom: calc(min(1600px, 112vw) * -.2); }
+@media (max-width: 640px) { .hero.plain { --range-w: 210vw; } .hero.plain .range { margin-bottom: -30vw; } }
+.hero.plain .hero-shot { margin-top: 0; }
 .hero.plain .hero-h { text-shadow: none; font-size: clamp(36px, 5.4vw, 68px); }
 .hero.plain .hero-lede { color: var(--ink-2); text-shadow: none; }
-.hero.plain .hero-lede a { color: var(--ink); text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: rgba(15, 29, 43, .35); }
+.hero.plain .hero-lede a { color: var(--ink); text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: rgba(255, 255, 255, .35); }
 .hero.plain .hero-lede a:hover { text-decoration-color: currentColor; }
 .hero.plain .hero-meta { color: var(--ink-3); }
-.hero.plain .btn-text { color: var(--ink-2); text-decoration-color: rgba(15, 29, 43, .3); }
+.hero.plain .btn-text { color: var(--ink-2); text-decoration-color: rgba(255, 255, 255, .3); }
 .hero.plain .shot-move { box-shadow: none; }
 .hero.plain .shot-fade { display: none; }
-.hero.plain .hero-shot .app { box-shadow: 0 30px 80px -30px rgba(10, 40, 70, .35), 0 0 0 1px rgba(15, 29, 43, .09); }
 /* ---- the hero window: one page, standing still ---- */
 .hero .app { --w: 1100; }
 .hero .a-desk { min-height: calc(var(--u) * 560); }
@@ -128,7 +132,7 @@
 .bars .b.best i { background: var(--sky-700); }
 .bars .b span:last-child { color: var(--ink-3); font-variant-numeric: tabular-nums; text-align: right; }
 .bars .b span:first-child { color: var(--ink); font-weight: 500; }
-.pop .app { --w: 620; box-shadow: 0 20px 50px -30px rgba(10, 40, 70, .4), 0 0 0 1px rgba(15, 29, 43, .09); }
+.pop .app { --w: 620; }
 .pop .vis { container-type: inline-size; }
 .pop .a-desk { min-height: calc(var(--u) * 300); }
 
@@ -152,6 +156,7 @@
 </style>
 </head>
 <body>
+<div class="edges" aria-hidden="true"></div>
 
 <header class="bar ink" id="bar">
   <div class="bar-in">
@@ -175,6 +180,8 @@
 
   <!-- ============================================================ Hero -->
   <section class="hero plain" id="hero" data-loop>
+    <div class="sky" aria-hidden="true"></div>
+    <div class="sky-tint" aria-hidden="true"></div>
     <div class="hero-in wrap">
       <h1 class="hero-h">
         <span>Everything it does today.</span>
@@ -191,6 +198,7 @@
       </div>
       <span class="hero-meta" id="cta-note">Free while in beta · Mac, Windows and Linux</span>
     </div>
+    <img class="scene range" src="assets/range-clouds.webp" alt="" width="988" height="275">
 
     <div class="hero-shot">
       <div class="shot-move">
@@ -255,6 +263,7 @@
   <section class="sec" id="meetings">
     <div class="wrap stack">
       <div class="txt">
+        <img class="emblem rv" src="assets/obj-wave.webp" alt="" width="526" height="418">
         <h2 class="rv">Press record. Read back who said what.</h2>
         <p class="rv" style="--d:80ms">Sonomy catches your microphone and your computer's audio, then writes the transcript into the page with every speaker told apart.</p>
       </div>
@@ -316,6 +325,7 @@
   <section class="sec" id="search">
     <div class="wrap stack">
       <div class="txt">
+        <img class="emblem rv" src="assets/obj-lens.webp" alt="" width="957" height="740">
         <h2 class="rv">Ask your notes a question.</h2>
         <p class="rv" style="--d:80ms">Search understands what you meant, not the words you typed. Ask for “the dinner at Marco's” and get the page you called “Saturday plans”.</p>
       </div>
@@ -356,6 +366,7 @@
   <section class="sec" id="writing">
     <div class="wrap stack">
       <div class="txt">
+        <img class="emblem rv" src="assets/obj-page.webp" alt="" width="384" height="490">
         <h2 class="rv">Writing that gets out of your way.</h2>
         <p class="rv" style="--d:80ms">Type a slash and pick what you need: a heading, a to-do, a card, a formula, a page inside the page. Drag any block where it belongs.</p>
       </div>
@@ -399,6 +410,7 @@
   <section class="band" id="together">
     <div class="wrap">
       <div class="txt centre" style="margin:0 auto 56px;max-width:64ch">
+        <img class="emblem rv" src="assets/obj-peaks.webp" alt="" width="582" height="303">
         <h2 class="rv" style="max-width:24ch">Write the same page at the same time. No cloud in between.</h2>
         <p class="rv" style="--d:80ms">Edit the same page letter by letter, as if you were at one keyboard. Your computers talk to each other directly. Take the share back and it's gone from their side too.</p>
       </div>
@@ -526,10 +538,10 @@
 
   <!-- ============================================================ Download -->
   <section class="get" id="download">
+    <img class="scene lake" src="assets/lake.webp" alt="" width="991" height="321" loading="lazy">
     <div class="wrap">
       <div class="skycard rv" data-loop>
         <div class="sky" aria-hidden="true"></div>
-        <div class="peak" aria-hidden="true"></div>
         <div class="sky-tint" aria-hidden="true"></div>
         <div>
           <h2>Get Sonomy Notes.</h2>
@@ -714,7 +726,7 @@
   <div class="pop-body">
     <p>Every colour keeps its ink in the dark: a yellow marker stays yellow, with dark writing on it, the way it would be on paper. Choose compact, regular or roomy for the bar and the lists.</p>
     <div class="pop-vis vis">
-      <div class="app dark" aria-hidden="true">
+      <div class="app" aria-hidden="true">
         <div class="a-bar">
           <span class="a-tl"><i></i><i></i><i></i></span>
           <div class="a-left"><span class="a-chip ico"><i data-g="chevron.backward"></i></span><span class="a-chip"><i data-g="square.grid.2x2"></i>Pages<i class="hint" data-g="chevron.down"></i></span><span class="a-chip"><i data-g="plus"></i>New</span></div>

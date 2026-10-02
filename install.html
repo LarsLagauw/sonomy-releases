@@ -22,17 +22,20 @@
 <script>document.documentElement.className += ' js';</script>
 
 <style>
-.hero.plain { background: #fff; color: var(--ink); padding-top: 150px; padding-bottom: 0; min-height: 0; }
+.hero.plain { color: var(--ink); padding-top: 150px; padding-bottom: 0; min-height: 0; overflow: visible; }
+/* A low ridge under the switch, the first steps starting in its mist. */
+.hero.plain .range { --range-w: min(1300px, 120vw); --range-top: clamp(28px, 4vw, 52px); margin-bottom: calc(min(1300px, 120vw) * -.07); opacity: .85; }
+@media (max-width: 640px) { .hero.plain .range { --range-w: 190vw; } }
 .hero.plain .hero-h { text-shadow: none; font-size: clamp(36px, 5.4vw, 64px); }
 .hero.plain .hero-lede { color: var(--ink-2); text-shadow: none; }
 
 /* ---- the Mac / Windows switch ---- */
-.pick { display: inline-flex; gap: 4px; padding: 4px; margin-top: 34px; border-radius: 12px; background: var(--cloud); }
+.pick { display: inline-flex; gap: 4px; padding: 4px; margin-top: 34px; border-radius: 12px; }
 .pick button {
   border: 0; background: transparent; cursor: pointer; padding: 9px 22px; border-radius: 9px;
   font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--ink-2);
 }
-.pick button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(15, 29, 43, .14); }
+.pick button[aria-selected="true"] { background: #fff; color: #06101c; box-shadow: 0 6px 24px -8px rgba(90, 166, 255, .6); }
 /* Without script both guides show, one after the other. */
 .js .guide[hidden] { display: none; }
 
@@ -45,7 +48,7 @@
 .steps > li::before {
   content: counter(s); position: absolute; left: 0; top: -2px;
   width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--ink); color: #fff; font: 600 16px/1 var(--display);
+  background: var(--frost-2); color: var(--ink); border: 1px solid var(--rim); font: 600 16px/1 var(--display);
 }
 .steps > li:not(:last-child)::after {
   content: ''; position: absolute; left: 16.5px; top: 42px; bottom: 10px; width: 1px; background: var(--line);
@@ -55,7 +58,7 @@
 .steps p b, .steps li li b { color: var(--ink); font-weight: 600; }
 .steps ul { margin: 10px 0 0; padding-left: 20px; color: var(--ink-2); }
 .steps ul li + li { margin-top: 4px; }
-.aside { margin-top: 18px; padding: 16px 20px; border-radius: 12px; background: var(--cloud-2); border: 1px solid var(--line); }
+.aside { margin-top: 18px; padding: 16px 20px; border-radius: 14px; }
 .aside h4 { margin: 0; font: 600 16px/1.4 var(--display); }
 .aside p { margin-top: 6px; font-size: 16px; }
 .tip { font-size: 15px; color: var(--ink-3) !important; }
@@ -118,6 +121,7 @@
 </style>
 </head>
 <body>
+<div class="edges" aria-hidden="true"></div>
 
 <header class="bar ink" id="bar">
   <div class="bar-in">
@@ -148,6 +152,7 @@
         <button type="button" role="tab" id="tab-windows" aria-controls="windows" aria-selected="false">Windows</button>
       </div>
     </div>
+    <img class="scene range" src="assets/range-ridge.webp" alt="" width="989" height="222">
   </section>
 
   <!-- ============================================================ Mac -->

@@ -45,6 +45,37 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* ---------------------------------------------------------------- Depth
+     How far down the page is, for site.css: --p (0 to 1) moves the glows and the
+     ice at the edges, --sy (pixels, first screen only) sinks the hero's range
+     slower than the page moves, and --e on a [data-depth] scene is how far it
+     has travelled through the window (0 coming in at the bottom, 1 gone at the
+     top). Written once a frame, never while still; every rect is read before
+     anything is written, so a frame costs one layout. */
+  var root = document.documentElement;
+  var deep = document.querySelectorAll('[data-depth]');
+  var queued = false;
+  function depth() {
+    queued = false;
+    var y = window.scrollY;
+    var h = window.innerHeight;
+    var room = Math.max(1, root.scrollHeight - h);
+    var e = [];
+    for (var i = 0; i < deep.length; i++) {
+      var r = deep[i].getBoundingClientRect();
+      e.push(Math.min(1, Math.max(0, (h - r.top) / (h + r.height))));
+    }
+    root.style.setProperty('--p', (y / room).toFixed(4));
+    root.style.setProperty('--sy', Math.min(y, h * 1.5).toFixed(0));
+    for (var j = 0; j < deep.length; j++) deep[j].style.setProperty('--e', e[j].toFixed(4));
+  }
+  if (!reduced) {
+    depth();
+    window.addEventListener('scroll', function () {
+      if (!queued) { queued = true; requestAnimationFrame(depth); }
+    }, { passive: true });
+  }
+
   /* ---------------------------------------------------------------- Word and letter reveals */
   function splitWords(el) {
     var words = el.textContent.split(' ');

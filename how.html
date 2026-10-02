@@ -22,23 +22,21 @@
    questions a careful person asks once they have read those two: who hears my
    meetings, who can read a page on the way, how do two computers find each other,
    what if Sonomy stops. Same chapter layout as the landing page (question left,
-   answer right, one drawing underneath), set on the site's ink instead of white.
+   answer right, one drawing underneath), in the same night as the other pages.
    Drawings are white hairlines. It explains what happens, never how it is built. */
-html { background: #0e1a26; }
 body.dk {
-  background: #0e1a26; color: #f3f6f9;
-  --d-ink: #f3f6f9;
-  --d-ink-2: rgba(232, 240, 248, .62);
-  --d-ink-3: rgba(222, 234, 246, .38);
-  --d-line: rgba(255, 255, 255, .13);
+  --d-ink: var(--ink);
+  --d-ink-2: var(--ink-2);
+  --d-ink-3: var(--ink-3);
+  --d-line: var(--line);
 }
 body.dk .bar { color: var(--d-ink); }
 body.dk .bar.is-stuck {
-  background: rgba(14, 26, 38, .78); border-bottom-color: var(--d-line);
+  background: rgba(3, 5, 9, .52); border-bottom-color: var(--d-line);
   -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%);
 }
 body.dk .bar .ver { border-color: rgba(255, 255, 255, .24); }
-body.dk .bar .btn-bar { background: #fff; color: var(--ink); }
+body.dk .bar .btn-bar { background: #fff; color: #06101c; }
 body.dk :focus-visible { outline-color: #fff; }
 body.dk .ch-head { align-items: start; }
 body.dk .ch-head h2 { color: var(--d-ink); }

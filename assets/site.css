@@ -1,6 +1,6 @@
 /* Sonomy Notes — the site. One stylesheet for index.html and how.html.
 
-   Two halves. The first is the page itself: type, colour, the bar, the hero sky,
+   Two halves. The first is the page itself: type, the night, the bar, the range,
    the download card. The second is the mockup system: every picture of the app
    on these pages is HTML and CSS built from the app's own numbers (chrome.css,
    theme.css, editor.css), scaled with one unit — `--u`, one app pixel — so a
@@ -10,19 +10,32 @@
    `calc(var(--u) * n)` in the source is `calc(var(--u) * n)`; site.src.css is expanded into
    site.css by a one-line substitution (see site/README.md). */
 
+/* The world: one night, all the way down. Every page sits on the same black,
+   lit from below by the crystal range out of the icon, so moving between
+   sections and pages never crosses a colour edge. Text is white on black;
+   anything that holds controls is frosted ice over the dark. */
 :root {
-  --sky-900: #0b4d8c;
-  --sky-700: #146fbf;
-  --sky-500: #2a93e0;
-  --sky-200: #bfe3f7;
-  --cloud: #edf5fb;
-  --cloud-2: #f6fafd;
+  --night: #020306;
+  --ice: #8fc8ff;
+  --ice-deep: #2f7bff;
+  --frost: rgba(170, 210, 255, .055);
+  --frost-2: rgba(170, 210, 255, .09);
+  --rim: rgba(190, 225, 255, .14);
+
+  /* The old light names, now pointing at the dark palette, so every rule that
+     says "ink" or "cloud" follows without being rewritten. */
+  --sky-900: #b9dcff;
+  --sky-700: #8fc8ff;
+  --sky-500: #5aa6ff;
+  --sky-200: rgba(143, 200, 255, .16);
+  --cloud: var(--frost);
+  --cloud-2: rgba(170, 210, 255, .035);
   --white: #ffffff;
 
-  --ink: #0f1d2b;
-  --ink-2: #3a4d5e;
-  --ink-3: #6e7f8d;
-  --line: rgba(15, 29, 43, .10);
+  --ink: #f2f6fb;
+  --ink-2: rgba(222, 234, 248, .70);
+  --ink-3: rgba(210, 226, 244, .46);
+  --line: rgba(190, 220, 255, .12);
 
   --display: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
   --body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -34,42 +47,73 @@
   --gut: clamp(20px, 5vw, 56px);
   --measure: 1120px;
   --ease: cubic-bezier(.2, .7, .2, 1);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--night); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
   margin: 0;
-  background: var(--white);
+  background: transparent;
   color: var(--ink);
   font-family: var(--body);
   font-size: 17px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+}
+/* The air: a few cold glows, fixed to the window and climbing slowly as the page
+   scrolls (site.js writes --p, 0 at the top and 1 at the end), so going down the
+   page feels like moving through one place rather than past bands of colour. */
+body::before {
+  content: ""; position: fixed; left: -10vw; right: -10vw; top: -20vh; height: 160vh; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(40vw 30vh at 18% 30%, rgba(47, 123, 255, .13), transparent 70%),
+    radial-gradient(46vw 34vh at 84% 58%, rgba(90, 166, 255, .10), transparent 70%),
+    radial-gradient(60vw 40vh at 40% 96%, rgba(30, 90, 220, .14), transparent 70%);
+  transform: translate3d(0, calc(var(--p, 0) * -40vh), 0);
+}
+/* Grain, so the gradients on black do not band. */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .05; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 p { margin: 0; }
 h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 600; }
 button { font: inherit; color: inherit; }
+::selection { background: rgba(143, 200, 255, .32); color: #fff; }
 
-:focus-visible { outline: 2px solid var(--sky-700); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; border-radius: 6px; }
 
 .wrap { width: 100%; max-width: var(--measure); margin-inline: auto; padding-inline: var(--gut); }
 
-/* Reveal on scroll. Only when scripting is on, so nothing is ever hidden without it. */
+/* Frosted ice: the one surface on these pages. */
+.glass, .why-card, .skycard, .plats, .pop, .aside, .pick {
+  background: linear-gradient(180deg, rgba(170, 210, 255, .085), rgba(170, 210, 255, .03));
+  border: 1px solid var(--rim);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 40px 90px -50px rgba(0, 0, 0, .9);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  backdrop-filter: blur(26px) saturate(150%);
+}
+
+/* Reveal on scroll: a thing arrives out of the haze, not just up from below.
+   Only when scripting is on, so nothing is ever hidden without it. */
 .js .rv {
   opacity: 0;
   transform: translateY(26px);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
+  filter: blur(8px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease), filter 1s var(--ease);
   transition-delay: var(--d, 0ms);
 }
-.js .rv.is-in { opacity: 1; transform: none; }
+.js .rv.is-in { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: reduce) {
-  .js .rv { opacity: 1; transform: none; transition: none; }
+  .js .rv { opacity: 1; transform: none; filter: none; transition: none; }
 }
 
 /* Everything that loops is stilled while its section is off screen. */
@@ -78,16 +122,14 @@ button { font: inherit; color: inherit; }
 /* ---------------------------------------------------------------- Bar */
 .bar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  color: #fff;
-  transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+  color: var(--ink);
+  transition: background-color .35s ease, border-color .35s ease;
   border-bottom: 1px solid transparent;
 }
-.bar.ink { color: var(--ink); }
 .bar.is-stuck {
-  color: var(--ink);
-  background: rgba(255, 255, 255, .8);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  backdrop-filter: blur(16px) saturate(160%);
+  background: rgba(3, 5, 9, .52);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
   border-bottom-color: var(--line);
 }
 .bar-in {
@@ -95,19 +137,19 @@ button { font: inherit; color: inherit; }
   height: 62px; max-width: var(--measure); margin-inline: auto; padding-inline: var(--gut);
 }
 .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.mark img { width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 1px 4px rgba(0, 0, 0, .18); }
+.mark img { width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 0 0 1px rgba(190, 225, 255, .16), 0 4px 18px -4px rgba(47, 123, 255, .55); }
 .mark span { font-family: var(--display); font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; }
 .nav { display: flex; gap: 24px; margin-left: 14px; }
 .nav a {
-  font-size: 14.5px; font-weight: 500; text-decoration: none; opacity: .82;
+  font-size: 14.5px; font-weight: 500; text-decoration: none; opacity: .66;
   transition: opacity .2s ease; white-space: nowrap;
 }
 .nav a:hover, .nav a.here { opacity: 1; }
-.nav a.here { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+.nav a.here { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; text-decoration-color: var(--ice); }
 .bar-sp { flex: 1; }
 .ver {
-  font-size: 12.5px; font-weight: 500; letter-spacing: .01em; opacity: .72;
-  padding: 4px 10px; border-radius: 999px; border: 1px solid currentColor;
+  font-size: 12.5px; font-weight: 500; letter-spacing: .01em; color: var(--ink-2);
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--rim);
   white-space: nowrap;
 }
 .bar .btn-bar {
@@ -122,101 +164,142 @@ button { font: inherit; color: inherit; }
   font-family: var(--body); font-weight: 600; font-size: 16px; line-height: 1;
   text-decoration: none; padding: 16px 24px; border-radius: 12px;
   border: 1px solid transparent; cursor: pointer;
-  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background-color .2s ease, color .2s ease;
+  transition: transform .2s var(--ease), box-shadow .3s var(--ease), background-color .2s ease, color .2s ease;
 }
 .btn svg { width: 16px; height: 16px; flex: none; }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
-.btn-light { background: #fff; color: var(--ink); box-shadow: 0 8px 28px -10px rgba(6, 40, 70, .55); }
-.btn-light:hover { box-shadow: 0 14px 34px -12px rgba(6, 40, 70, .6); }
-.btn-ink { background: var(--ink); color: #fff; }
-.btn-ink:hover { background: #1b2f41; }
-.btn-sky { background: var(--sky-700); color: #fff; }
-.btn-sky:hover { background: var(--sky-900); }
-.btn-ghost { background: transparent; color: var(--ink); border-color: rgba(15, 29, 43, .18); }
-.btn-ghost:hover { border-color: rgba(15, 29, 43, .4); }
+/* The one bright thing on a page: white ice, catching blue light underneath. */
+.btn-light { background: #fff; color: #06101c; box-shadow: 0 10px 40px -12px rgba(90, 166, 255, .65); }
+.btn-light:hover { box-shadow: 0 14px 50px -10px rgba(90, 166, 255, .85); }
+.btn-ink { background: #fff; color: #06101c; }
+.btn-ink:hover { background: #e6f1ff; }
+.btn-sky { background: var(--ice-deep); color: #fff; }
+.btn-sky:hover { background: #4b8eff; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--rim); }
+.btn-ghost:hover { border-color: rgba(190, 225, 255, .4); }
 .btn-sm { padding: 9px 15px; font-size: 14px; border-radius: 9px; }
-.bar:not(.is-stuck):not(.ink) .btn-bar { background: #fff; color: var(--ink); }
-.bar.is-stuck .btn-bar, .bar.ink .btn-bar { background: var(--ink); color: #fff; box-shadow: none; }
+.bar .btn-bar { background: #fff; color: #06101c; box-shadow: none; }
 .btn-text {
   font-weight: 500; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
-  text-decoration-color: rgba(255, 255, 255, .5);
+  text-decoration-color: rgba(255, 255, 255, .4); color: var(--ink);
 }
 .btn-text:hover { text-decoration-color: currentColor; }
 .more {
-  display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--sky-700);
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--ice);
   text-decoration: none; margin-top: 18px; font-size: 16.5px;
 }
 .more svg { width: 14px; height: 14px; transition: transform .2s var(--ease); }
 .more:hover svg { transform: translateX(3px); }
 @media (prefers-reduced-motion: reduce) { .btn, .btn:hover { transform: none; } }
 
-/* ---------------------------------------------------------------- Hero sky */
+/* ---------------------------------------------------------------- The scenes
+   Every picture of the world is art from the image model that drew the icon
+   (site/art/), cut by tools/cut-art.py into pieces whose black is transparent,
+   so a scene lies on the night with no box around it. A scene is an
+   <img class="scene">; the section it stands in decides where it goes. */
 .hero {
-  position: relative; overflow: hidden; isolation: isolate;
-  background: #1f86d4; color: #fff;
+  position: relative; isolation: isolate;
+  /* Clipped at the sides only: the range sinks past the foot of the hero as the
+     page moves, and a clip there would draw a line across the night. */
+  overflow: hidden; overflow: clip visible;
+  background: transparent; color: var(--ink);
   padding-top: 128px;
 }
+/* The glow behind the range, gone before the foot of the section, and the night
+   above it. Neither paints the foot: anything opaque there would hide the ice
+   at the edges behind a straight line. */
 .sky {
-  position: absolute; inset: -6%; z-index: -4;
-  background: url("sky.png") 50% 50% / 100% 100% no-repeat;
-  filter: blur(18px) saturate(1.08);
-  will-change: transform;
-}
-.peak {
-  position: absolute; left: -10%; right: -10%; bottom: -12%; height: 78%; z-index: -3;
-  animation: skydrift 40s ease-in-out infinite alternate;
-  will-change: transform;
-}
-.peak::before {
-  content: ""; position: absolute; inset: 0;
-  background: url("peak.png") 50% 100% / 118% auto no-repeat;
-  filter: blur(34px) saturate(1.05);
-  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 45%);
-  mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 45%);
-}
-@keyframes skydrift {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(-2%, 1%, 0) scale(1.06); }
+  position: absolute; inset: 0; z-index: -4; pointer-events: none;
+  background: radial-gradient(70% 55% at 50% 78%, rgba(40, 110, 255, .30), transparent 72%);
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+  mask-image: linear-gradient(180deg, #000 55%, transparent);
 }
 .sky-tint {
-  position: absolute; inset: 0; z-index: -2;
+  position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background: linear-gradient(180deg, var(--night) 0%, rgba(2, 3, 6, .6) 16%, rgba(2, 3, 6, 0) 34%);
+}
+.scene {
+  display: block; max-width: none; height: auto; pointer-events: none; user-select: none;
+  /* A piece is cut square to the art; its sides dissolve here, so no screen is
+     wide enough to show where a picture stops. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+}
+/* The range under a hero: in the flow under the type, wider than the window,
+   sinking slower than the page once it starts to move. */
+.hero .range {
+  position: relative; z-index: -3;
+  /* The sides, and the foot, which melts into the chapter below. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, #000 62%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, #000 62%, transparent);
+  mask-composite: intersect;
+  width: var(--range-w, min(1600px, 112vw));
+  margin: var(--range-top, 0) 0 0 50%;
+  transform: translate3d(-50%, calc(var(--sy, 0) * .2px), 0);
+  animation: scenein 2.2s var(--ease) .1s both;
+  will-change: transform;
+}
+@keyframes scenein { from { opacity: 0; filter: blur(16px); } }
+
+/* Ice at the edges: tall cliffs of crystal at both sides of the window, out of
+   focus and moving slower than the page, so going down it is passing them.
+   Not on a phone, which has no sides to put them on. */
+.edges {
+  --edge-w: clamp(150px, 15vw, 260px);
+  position: fixed; left: 0; right: 0; top: 0; height: 330vh; z-index: -1; pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(8, 60, 110, .34) 0%, rgba(8, 60, 110, .10) 30%, rgba(8, 60, 110, 0) 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0) 56%, rgba(255, 255, 255, .6) 78%, #fff 100%);
+    url("edge-l1.webp") left -1vw top 96vh / var(--edge-w) auto no-repeat,
+    url("edge-r1.webp") right -1vw top 150vh / var(--edge-w) auto no-repeat,
+    url("edge-l2.webp") left -1vw top 205vh / var(--edge-w) auto no-repeat,
+    url("edge-r2.webp") right -1vw top 258vh / var(--edge-w) auto no-repeat;
+  filter: blur(2.5px);
+  opacity: .62;
+  transform: translate3d(0, calc(var(--p, 0) * -230vh), 0);
 }
-.cloud {
-  position: absolute; z-index: -1; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0));
-  pointer-events: none;
+@media (max-width: 760px) { .edges { display: none; } }
+
+/* A passage between two chapters: a scene the page goes through, coming
+   closer while it crosses the window (site.js writes --e). */
+.interlude { position: relative; margin-top: clamp(40px, 6vw, 90px); pointer-events: none; overflow: hidden; overflow: clip visible; }
+.interlude .scene {
+  width: min(1500px, 124vw); margin-left: 50%;
+  transform: translate3d(-50%, 0, 0) scale(calc(.9 + var(--e, .5) * .34));
+  -webkit-mask-image: radial-gradient(closest-side, #000 42%, transparent);
+  mask-image: radial-gradient(closest-side, #000 42%, transparent);
 }
-.cloud.a { width: 62vw; height: 26vw; left: -10vw; bottom: 8%; animation: drift 44s ease-in-out infinite alternate; }
-.cloud.b { width: 58vw; height: 24vw; right: -14vw; bottom: 14%; animation: drift 52s ease-in-out infinite alternate-reverse; }
-.cloud.c { width: 40vw; height: 16vw; left: 30vw; bottom: 2%; animation: drift 60s ease-in-out infinite alternate; }
-@keyframes drift {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(6vw, -1.5vw, 0); }
+
+/* A crystal over a feature's headline, hanging in the air of the place. */
+.emblem {
+  display: block; width: auto; height: clamp(104px, 11vw, 158px); margin: 0 auto clamp(16px, 2vw, 26px);
+  animation: hang 7s ease-in-out infinite alternate;
 }
+@keyframes hang { to { translate: 0 -9px; } }
 
 .hero-in { position: relative; text-align: center; }
 .hero-icon {
   width: 96px; height: 96px; margin: 0 auto 26px; border-radius: 22px;
-  box-shadow: 0 18px 40px -14px rgba(4, 30, 60, .7), 0 0 0 1px rgba(255, 255, 255, .25) inset;
+  box-shadow: 0 0 0 1px rgba(190, 225, 255, .18), 0 24px 60px -18px rgba(47, 123, 255, .75);
   animation: rise .9s var(--ease) both;
 }
 h1.hero-h {
   font-size: clamp(38px, 6vw, 76px);
   line-height: .98; letter-spacing: -.035em; font-weight: 700;
   max-width: 26ch; margin: 0 auto 28px;
-  text-shadow: 0 2px 30px rgba(4, 30, 60, .35);
 }
-h1.hero-h span { display: block; animation: rise .9s var(--ease) both; }
+/* White at the top of a letter, ice at its foot: the type stands in the same
+   light as the range. */
+h1.hero-h span {
+  display: block; animation: rise .9s var(--ease) both;
+  background: linear-gradient(180deg, #ffffff 35%, #b8dcff 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 h1.hero-h span:nth-child(2) { animation-delay: .07s; }
 h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 .hero-lede {
   font-size: clamp(17px, 1.55vw, 20px); line-height: 1.5;
-  color: rgba(255, 255, 255, .92); max-width: 50ch; margin: 0 auto 34px;
-  text-shadow: 0 1px 18px rgba(4, 30, 60, .35);
+  color: var(--ink-2); max-width: 50ch; margin: 0 auto 34px;
   animation: rise .9s var(--ease) .16s both;
 }
 .hero-cta {
@@ -224,13 +307,13 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
   animation: rise .9s var(--ease) .26s both;
 }
 .hero-meta {
-  display: block; margin-top: 18px; font-size: 13.5px; color: rgba(255, 255, 255, .8);
+  display: block; margin-top: 18px; font-size: 13.5px; color: var(--ink-3);
   animation: rise .9s var(--ease) .32s both;
   min-height: 1.4em;
 }
 @keyframes rise {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
 }
 .hero-shot {
   position: relative; margin: clamp(36px, 4vw, 52px) auto 0;
@@ -247,11 +330,13 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 }
 .shot-fade {
   position: absolute; left: calc(50% - 50vw); right: calc(50% - 50vw); bottom: -2px; height: 46%; z-index: 3; pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 78%);
+  background: linear-gradient(180deg, rgba(2, 3, 6, 0), var(--night) 82%);
 }
-.hero-tail { height: clamp(40px, 6vw, 90px); background: #fff; }
+.hero-tail { height: clamp(40px, 6vw, 90px); }
 @media (prefers-reduced-motion: reduce) {
-  .sky, .peak, .cloud, .hero-icon, h1.hero-h span, .hero-lede, .hero-cta, .hero-meta, .shot-move { animation: none; }
+  .scene, .emblem, .hero-icon, h1.hero-h span, .hero-lede, .hero-cta, .hero-meta, .shot-move { animation: none; }
+  .hero .range { transform: translate3d(-50%, 0, 0); }
+  .edges { transform: none; }
   .shot-move { transform: none; }
   .shot-fade { opacity: .55; }
 }
@@ -279,11 +364,16 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 .centre .txt h2 { max-width: 24ch; }
 .centre .txt p { max-width: 58ch; }
 
-/* A band: white to cloud and back. */
+/* A band used to be a lighter stripe. On the night it is only a pool of light
+   behind its content, with no edge to cross. */
 .band {
+  position: relative;
   margin-top: clamp(96px, 12vw, 156px);
   padding: clamp(80px, 9vw, 130px) 0 clamp(72px, 8vw, 110px);
-  background: linear-gradient(180deg, #fff 0%, var(--cloud) 18%, var(--cloud) 82%, #fff 100%);
+}
+.band::before, .next::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 50%, rgba(47, 123, 255, .10), transparent 75%);
 }
 
 /* ---------------------------------------------------------------- Chapters
@@ -308,7 +398,7 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 .why { padding-top: clamp(96px, 12vw, 156px); }
 .why-card {
   position: relative; overflow: hidden; border-radius: 28px;
-  background: var(--cloud); padding: clamp(40px, 5.5vw, 76px);
+  padding: clamp(40px, 5.5vw, 76px);
   display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: center;
 }
 .why-card h2 { font-size: clamp(32px, 4.2vw, 54px); line-height: 1.02; letter-spacing: -.035em; font-weight: 700; margin-bottom: 20px; text-wrap: balance; }
@@ -316,10 +406,9 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 .why-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .why-list li {
   display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: start;
-  background: #fff; border-radius: 16px; padding: 16px 18px;
-  box-shadow: 0 10px 30px -22px rgba(10, 40, 70, .4);
+  background: var(--frost); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px;
 }
-.why-list .g { width: 44px; height: 44px; border-radius: 12px; background: var(--sky-200); color: var(--sky-900); display: grid; place-items: center; font-size: 20px; }
+.why-list .g { width: 44px; height: 44px; border-radius: 12px; background: var(--sky-200); color: var(--ice); display: grid; place-items: center; font-size: 20px; }
 .why-list b { display: block; font-family: var(--display); font-weight: 600; font-size: 17.5px; margin-bottom: 3px; letter-spacing: -.01em; }
 .why-list span { color: var(--ink-2); font-size: 15.5px; line-height: 1.5; }
 
@@ -332,37 +421,38 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
   margin: 0; padding: 0; list-style: none;
 }
 .feat {
-  appearance: none; border: 0; background: transparent; text-align: left; cursor: pointer;
+  appearance: none; border: 1px solid transparent; background: transparent; text-align: left; cursor: pointer;
   display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start;
   padding: 18px 16px 18px 14px; border-radius: 16px;
-  transition: background-color .2s ease, transform .2s var(--ease);
+  transition: background-color .25s ease, border-color .25s ease, transform .2s var(--ease);
   width: 100%;
 }
-.feat:hover { background: var(--cloud); }
+.feat:hover { background: var(--frost); border-color: var(--line); }
 .feat:active { transform: scale(.99); }
 .feat .g {
   width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
-  background: rgba(46, 111, 218, .10); color: var(--sky-700); font-size: 18px;
+  background: rgba(143, 200, 255, .10); color: var(--ice); font-size: 18px;
+  box-shadow: inset 0 0 0 1px rgba(143, 200, 255, .14);
 }
 .feat b { display: block; font-family: var(--display); font-weight: 600; font-size: 17px; letter-spacing: -.01em; line-height: 1.25; margin-bottom: 4px; color: var(--ink); }
 .feat span { display: block; font-size: 14.5px; line-height: 1.45; color: var(--ink-3); }
-.feat .open { display: inline-block; margin-top: 8px; font-size: 13.5px; font-weight: 600; color: var(--sky-700); opacity: 0; transition: opacity .2s ease; }
+.feat .open { display: inline-block; margin-top: 8px; font-size: 13.5px; font-weight: 600; color: var(--ice); opacity: 0; transition: opacity .2s ease; }
 .feat:hover .open, .feat:focus-visible .open { opacity: 1; }
 
 /* The popup. A real <dialog>, so Escape, focus and the backdrop are the browser's. */
 .pop {
-  border: 0; padding: 0; margin: auto;
+  padding: 0; margin: auto;
   width: min(720px, calc(100vw - 32px)); max-height: min(86vh, 860px);
-  border-radius: 24px; background: #fff; color: var(--ink);
-  box-shadow: 0 40px 100px -30px rgba(6, 40, 70, .55), 0 0 0 1px rgba(15, 29, 43, .06);
+  border-radius: 24px; color: var(--ink);
+  background: linear-gradient(180deg, rgba(22, 32, 48, .86), rgba(8, 12, 20, .9));
   overflow: hidden;
 }
-.pop::backdrop { background: rgba(8, 30, 52, .42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.pop[open] { animation: popin .32s var(--ease) both; }
-@keyframes popin { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+.pop::backdrop { background: rgba(1, 2, 5, .55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.pop[open] { animation: popin .36s var(--ease) both; }
+@keyframes popin { from { opacity: 0; transform: translateY(14px) scale(.985); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
 .pop-in { padding: clamp(24px, 4vw, 44px); overflow: auto; max-height: min(86vh, 860px); }
 .pop-head { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 18px; }
-.pop-head .g { flex: none; width: 56px; height: 56px; border-radius: 16px; background: rgba(46, 111, 218, .10); color: var(--sky-700); display: grid; place-items: center; font-size: 26px; }
+.pop-head .g { flex: none; width: 56px; height: 56px; border-radius: 16px; background: rgba(143, 200, 255, .10); color: var(--ice); display: grid; place-items: center; font-size: 26px; box-shadow: inset 0 0 0 1px rgba(143, 200, 255, .14); }
 .pop-head h3 { font-size: clamp(24px, 3vw, 32px); line-height: 1.08; letter-spacing: -.025em; font-weight: 700; text-wrap: balance; }
 .pop-head .kicker { color: var(--ink-3); font-size: 15.5px; margin-top: 6px; }
 .pop-body p { font-size: 16.5px; line-height: 1.6; color: var(--ink-2); }
@@ -371,53 +461,57 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 .pop-body .facts {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0 4px; padding: 0; list-style: none;
 }
-.pop-body .facts li { background: var(--cloud); border-radius: 14px; padding: 14px 16px; }
+.pop-body .facts li { background: var(--frost); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
 .pop-body .facts b { display: block; font-family: var(--display); font-size: 22px; letter-spacing: -.02em; line-height: 1.1; color: var(--ink); }
 .pop-body .facts span { display: block; font-size: 13.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.4; }
 .pop-body .fine { font-size: 14px; color: var(--ink-3); margin-top: 16px; }
-.pop-body .fine a { color: var(--sky-700); }
+.pop-body .fine a { color: var(--ice); }
 .pop-x {
   position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%;
-  border: 0; background: rgba(15, 29, 43, .06); color: var(--ink-2); cursor: pointer; display: grid; place-items: center;
+  border: 0; background: rgba(190, 225, 255, .08); color: var(--ink-2); cursor: pointer; display: grid; place-items: center;
 }
-.pop-x:hover { background: rgba(15, 29, 43, .12); color: var(--ink); }
+.pop-x:hover { background: rgba(190, 225, 255, .16); color: var(--ink); }
 .pop-x svg { width: 14px; height: 14px; }
 .pop-vis { margin: 22px 0 6px; }
 
-/* ---------------------------------------------------------------- Download */
-.get { padding: clamp(96px, 12vw, 156px) 0 clamp(56px, 7vw, 90px); }
+/* ---------------------------------------------------------------- Download
+   The foot of the range: the last card on a page is frosted ice over the lake,
+   which shows sharp at its sides and as blurred light through it. */
+.get { position: relative; overflow: hidden; padding: clamp(96px, 12vw, 156px) 0 clamp(56px, 7vw, 90px); }
+.get > .lake {
+  position: absolute; z-index: -1; left: 50%; top: 54%;
+  width: min(1900px, 150vw);
+  transform: translate3d(-50%, -50%, 0);
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent);
+  mask-image: radial-gradient(closest-side, #000 62%, transparent);
+}
 .skycard {
   position: relative; overflow: hidden; isolation: isolate;
-  border-radius: 28px; color: #fff; background: #1f86d4;
+  border-radius: 28px; color: var(--ink);
   padding: clamp(40px, 5.5vw, 76px);
   display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: center;
 }
-.skycard .sky { inset: -8%; }
-.skycard .peak { height: 120%; bottom: -30%; left: -20%; right: -20%; opacity: .9; }
-.skycard .peak::before { background-size: 90% auto; background-position: 78% 100%; }
+.skycard .sky { background: radial-gradient(80% 70% at 70% 110%, rgba(40, 110, 255, .36), transparent 70%); }
 .skycard .sky-tint {
   background:
-    linear-gradient(180deg, rgba(8, 60, 110, .30), rgba(8, 60, 110, .10) 55%, rgba(8, 60, 110, .34)),
-    linear-gradient(90deg, rgba(8, 60, 110, .28), rgba(8, 60, 110, 0) 70%);
+    linear-gradient(90deg, rgba(4, 7, 12, .82) 0%, rgba(4, 7, 12, .5) 46%, rgba(4, 7, 12, 0) 80%),
+    linear-gradient(180deg, rgba(4, 7, 12, .5), rgba(4, 7, 12, 0) 40%);
 }
-.skycard h2 { font-size: clamp(34px, 4.4vw, 58px); line-height: 1; letter-spacing: -.035em; font-weight: 700; margin-bottom: 20px; text-shadow: 0 2px 26px rgba(4, 30, 60, .35); }
-.skycard .lede { font-size: clamp(16.5px, 1.35vw, 19px); line-height: 1.55; color: rgba(255, 255, 255, .92); max-width: 40ch; margin-bottom: 30px; }
-.skycard .req { margin-top: 22px; font-size: 13.5px; color: rgba(255, 255, 255, .78); line-height: 1.6; max-width: 46ch; }
-.plats {
-  background: rgba(255, 255, 255, .96); color: var(--ink); border-radius: 18px; overflow: hidden;
-  box-shadow: 0 30px 70px -30px rgba(4, 30, 60, .6);
-}
+.skycard h2 { font-size: clamp(34px, 4.4vw, 58px); line-height: 1; letter-spacing: -.035em; font-weight: 700; margin-bottom: 20px; }
+.skycard .lede { font-size: clamp(16.5px, 1.35vw, 19px); line-height: 1.55; color: var(--ink-2); max-width: 40ch; margin-bottom: 30px; }
+.skycard .req { margin-top: 22px; font-size: 13.5px; color: var(--ink-3); line-height: 1.6; max-width: 46ch; }
+.skycard .req a { color: var(--ink-2); }
+.plats { border-radius: 18px; overflow: hidden; background: rgba(6, 10, 18, .55); }
 .plat {
   display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 18px;
   padding: 18px 22px; text-decoration: none;
   border-top: 1px solid var(--line); transition: background-color .2s ease;
 }
 .plat:first-child { border-top: 0; }
-.plat:hover { background: var(--cloud-2); }
-.plat .os { font-weight: 600; font-size: 16.5px; margin-bottom: 2px; }
+.plat:hover { background: rgba(170, 210, 255, .07); }
+.plat .os { font-weight: 600; font-size: 16.5px; margin-bottom: 2px; line-height: 1.25; }
 .plat .file { font-size: 13.5px; color: var(--ink-3); overflow-wrap: anywhere; }
-.plat .os { line-height: 1.25; }
-.plat .go { font-weight: 600; font-size: 14.5px; color: var(--sky-700); white-space: nowrap; text-align: right; }
+.plat .go { font-weight: 600; font-size: 14.5px; color: var(--ice); white-space: nowrap; text-align: right; }
 .plat .go b { display: block; font-weight: 500; font-size: 12.5px; color: var(--ink-3); margin-top: 3px; }
 .plat .go b:empty { display: none; }
 .plat.none .os, .plat.none .go { color: var(--ink-3); }
@@ -429,11 +523,15 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
   font-size: 14px; color: var(--ink-3);
 }
 .foot .mark { color: var(--ink); }
-.foot .mark img { box-shadow: none; }
+.foot .mark img { box-shadow: 0 0 0 1px rgba(190, 225, 255, .14); }
 .foot .mark span { font-size: 15px; }
 .foot .fsp { flex: 1; }
 .foot a { color: var(--ink-2); text-decoration: none; }
 .foot a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* The app windows stay in the app's light theme, standing on the night with a
+   rim of light rather than a shadow nobody sees. */
+.app { box-shadow: 0 0 0 1px rgba(190, 225, 255, .12), 0 40px 120px -40px rgba(47, 123, 255, .45) !important; }
 
 /* ================================================================ THE MOCKUP SYSTEM */
 
@@ -771,6 +869,9 @@ h1.hero-h span:nth-child(3) { animation-delay: .14s; }
 
 /* A plain folder beside the app: what the disk holds. */
 .finder {
+  /* Finder stands beside the app window, not inside it, so it carries the
+     light tokens itself; inherited, they are undefined and it goes see-through. */
+  --a-text: #37352f; --a-faint: #b2ada4; --a-rule: rgba(55, 53, 47, .16); --a-selected: rgba(46, 111, 218, .10); --a-raised: #ffffff;
   font-family: var(--ui); font-size: calc(var(--u) * 13); color: var(--a-text); background: var(--a-raised);
   border-radius: calc(var(--u) * 12); overflow: hidden; box-shadow: 0 30px 70px -30px rgba(10, 40, 70, .35), 0 0 0 1px rgba(15, 29, 43, .09);
 }
