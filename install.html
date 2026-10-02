@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Sonomy Notes on Mac or Windows</title>
+<meta name="description" content="Step by step: how to install Sonomy Notes on a Mac or a Windows PC, and how to get past the security warning the first time you open it.">
+
+<meta property="og:title" content="Install Sonomy Notes">
+<meta property="og:description" content="Step by step on Mac and Windows, including the one warning you will see the first time.">
+<meta property="og:image" content="assets/summit.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1a7fd0">
+
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script>document.documentElement.className += ' js';</script>
+
+<style>
+.hero.plain { background: #fff; color: var(--ink); padding-top: 150px; padding-bottom: 0; min-height: 0; }
+.hero.plain .hero-h { text-shadow: none; font-size: clamp(36px, 5.4vw, 64px); }
+.hero.plain .hero-lede { color: var(--ink-2); text-shadow: none; }
+
+/* ---- the Mac / Windows switch ---- */
+.pick { display: inline-flex; gap: 4px; padding: 4px; margin-top: 34px; border-radius: 12px; background: var(--cloud); }
+.pick button {
+  border: 0; background: transparent; cursor: pointer; padding: 9px 22px; border-radius: 9px;
+  font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--ink-2);
+}
+.pick button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(15, 29, 43, .14); }
+/* Without script both guides show, one after the other. */
+.js .guide[hidden] { display: none; }
+
+/* ---- the steps ---- */
+.guide { max-width: 720px; margin: 0 auto; padding: clamp(56px, 7vw, 90px) 0 0; }
+.guide > h2 { font-size: clamp(28px, 3.2vw, 38px); letter-spacing: -.01em; }
+.guide > .intro { margin-top: 12px; color: var(--ink-2); font-size: 18px; }
+.steps { list-style: none; margin: 40px 0 0; padding: 0; counter-reset: s; }
+.steps > li { counter-increment: s; position: relative; padding: 0 0 44px 56px; }
+.steps > li::before {
+  content: counter(s); position: absolute; left: 0; top: -2px;
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ink); color: #fff; font: 600 16px/1 var(--display);
+}
+.steps > li:not(:last-child)::after {
+  content: ''; position: absolute; left: 16.5px; top: 42px; bottom: 10px; width: 1px; background: var(--line);
+}
+.steps h3 { font-size: 21px; line-height: 1.3; }
+.steps p { margin-top: 8px; color: var(--ink-2); }
+.steps p b, .steps li li b { color: var(--ink); font-weight: 600; }
+.steps ul { margin: 10px 0 0; padding-left: 20px; color: var(--ink-2); }
+.steps ul li + li { margin-top: 4px; }
+.aside { margin-top: 18px; padding: 16px 20px; border-radius: 12px; background: var(--cloud-2); border: 1px solid var(--line); }
+.aside h4 { margin: 0; font: 600 16px/1.4 var(--display); }
+.aside p { margin-top: 6px; font-size: 16px; }
+.tip { font-size: 15px; color: var(--ink-3) !important; }
+.why { max-width: 720px; margin: 20px auto 0; padding: 26px 0 0; border-top: 1px solid var(--line); }
+.why h2 { font-size: 22px; }
+.why p { margin-top: 8px; color: var(--ink-2); }
+.why p + p { margin-top: 10px; }
+.done { padding-bottom: clamp(80px, 10vw, 130px); }
+
+/* ---- drawings of what the screen shows, so the warning is recognised ---- */
+.shot { margin-top: 18px; display: flex; justify-content: center; font-family: var(--ui); }
+/* macOS alert */
+.mac-alert {
+  width: 260px; padding: 20px 16px 16px; border-radius: 14px; text-align: center;
+  background: #ececec; box-shadow: 0 20px 50px -18px rgba(10, 30, 50, .45), 0 0 0 1px rgba(0, 0, 0, .08);
+  font-size: 12px; line-height: 1.35; color: #1d1d1f;
+}
+.mac-alert img { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 12px; }
+.mac-alert b { display: block; font-size: 13px; margin-bottom: 6px; }
+.mac-alert .btns { display: grid; gap: 7px; margin-top: 14px; }
+.mac-alert .btns.row { grid-template-columns: 1fr 1fr; }
+.mac-alert span.k { padding: 5px 0; border-radius: 6px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .15), 0 1px 1px rgba(0, 0, 0, .06); }
+.mac-alert span.k.def { background: #0a7cff; color: #fff; box-shadow: none; }
+.hl { outline: 2.5px solid #f2a516; outline-offset: 2px; }
+/* System Settings row */
+.mac-pane {
+  width: min(100%, 470px); border-radius: 12px; background: #fff; overflow: hidden;
+  box-shadow: 0 20px 50px -22px rgba(10, 30, 50, .4), 0 0 0 1px rgba(0, 0, 0, .09); font-size: 13px; color: #1d1d1f;
+}
+.mac-pane .ttl { padding: 11px 16px; font-weight: 600; border-bottom: 1px solid #e5e5e5; background: #f6f6f6; }
+.mac-pane .grp { padding: 14px 16px 16px; }
+.mac-pane .lbl { font-weight: 600; font-size: 12px; color: #6e6e73; margin-bottom: 8px; }
+.mac-pane .row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 9px; background: #f5f5f7; }
+.mac-pane .row span:first-child { flex: 1; }
+.mac-pane .row .k { padding: 4px 11px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .2), 0 1px 1px rgba(0, 0, 0, .06); white-space: nowrap; }
+/* Finder context menu */
+.mac-menu {
+  width: 190px; padding: 5px; border-radius: 9px; background: #f2f2f2; font-size: 13px; color: #1d1d1f;
+  box-shadow: 0 14px 40px -14px rgba(10, 30, 50, .45), 0 0 0 1px rgba(0, 0, 0, .1);
+}
+.mac-menu div { padding: 3px 10px; border-radius: 5px; }
+.mac-menu div.on { background: #0a7cff; color: #fff; }
+.mac-menu hr { border: 0; border-top: 1px solid #d8d8d8; margin: 4px 8px; }
+/* Windows SmartScreen */
+.smart {
+  width: min(100%, 440px); padding: 22px 24px 18px; background: #0b62c4; color: #fff; font-size: 13px; line-height: 1.45;
+  box-shadow: 0 20px 50px -22px rgba(10, 30, 50, .5); font-family: 'Segoe UI', var(--ui);
+}
+.smart .t { font-size: 22px; font-weight: 300; margin-bottom: 12px; }
+.smart u { text-underline-offset: 2px; }
+.smart .meta { margin-top: 12px; opacity: .92; }
+.smart .btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+.smart .btns span { padding: 5px 20px; border: 2px solid rgba(255, 255, 255, .9); }
+.smart .btns span.def { background: transparent; }
+@media (max-width: 560px) {
+  .steps > li { padding-left: 46px; }
+  .steps > li::before { width: 30px; height: 30px; font-size: 15px; }
+  .steps > li:not(:last-child)::after { left: 14.5px; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar ink" id="bar">
+  <div class="bar-in">
+    <a class="mark" href="index.html">
+      <img src="assets/icon.png" alt="" width="28" height="28">
+      <span>Sonomy Notes</span>
+    </a>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html">Why Sonomy</a>
+      <a href="app.html">The app</a>
+      <a href="how.html">How it works</a>
+      <a class="here" href="install.html">Install</a>
+    </nav>
+    <div class="bar-sp"></div>
+    <span class="ver" data-version>2.4.5 beta</span>
+    <a class="btn btn-sm btn-bar" id="cta-bar" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">Download</a>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+
+  <section class="hero plain">
+    <div class="hero-in">
+      <h1 class="hero-h">Installing Sonomy Notes.</h1>
+      <p class="hero-lede">A few minutes, once. The first time you open it, your computer warns you about it. Here is exactly what to click.</p>
+      <div class="pick" role="tablist" aria-label="Your computer">
+        <button type="button" role="tab" id="tab-mac" aria-controls="mac" aria-selected="true">Mac</button>
+        <button type="button" role="tab" id="tab-windows" aria-controls="windows" aria-selected="false">Windows</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ Mac -->
+  <section class="guide" id="mac" role="tabpanel" aria-labelledby="tab-mac">
+    <h2>On a Mac</h2>
+    <p class="intro">You need macOS 11 Big Sur or later. On Big Sur and Monterey, update Safari to 16.4 or later first.</p>
+
+    <ol class="steps">
+      <li>
+        <h3>Check which chip your Mac has.</h3>
+        <p>Click the <b>Apple menu</b> in the top-left corner and choose <b>About This Mac</b>. If it says <b>Chip: Apple M1</b> (or M2, M3, M4…), you have an Apple chip. If it says <b>Processor</b> with <b>Intel</b> in it, you have an Intel chip.</p>
+      </li>
+      <li>
+        <h3>Download the right disk image.</h3>
+        <p>On the <a href="app.html#download">download section</a>, pick <b>Mac with Apple chip</b> or <b>Mac with Intel chip</b>. The file lands in your <b>Downloads</b> folder and ends in <b>.dmg</b>.</p>
+        <p class="tip">The wrong one will not open, so this step matters.</p>
+      </li>
+      <li>
+        <h3>Drag Sonomy into Applications.</h3>
+        <p>Double-click the .dmg file. A window opens with the Sonomy icon and an Applications folder. Drag the <b>Sonomy</b> icon onto the <b>Applications</b> folder and wait for the copy to finish.</p>
+        <p class="tip">Don't open Sonomy from this window. It has to run from Applications, or updates can't install.</p>
+      </li>
+      <li>
+        <h3>Open it once, and see the warning.</h3>
+        <p>Open <b>Finder</b>, click <b>Applications</b> in the sidebar and double-click <b>Sonomy</b>. Your Mac says it could not verify the app and won't open it. That's expected. Click <b>Done</b> (or <b>OK</b>), and <b>not</b> Move to Trash.</p>
+        <div class="shot" aria-hidden="true">
+          <div class="mac-alert">
+            <img src="assets/icon.png" alt="">
+            <b>“Sonomy” Not Opened</b>
+            Apple could not verify “Sonomy” is free of malware that may harm your Mac or compromise your privacy.
+            <div class="btns"><span class="k def hl">Done</span><span class="k">Move to Trash</span></div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <h3>Allow it in System Settings.</h3>
+        <p>This is the step for <b>macOS 15 Sequoia and later</b>:</p>
+        <ul>
+          <li>Open the <b>Apple menu</b> and choose <b>System Settings</b>.</li>
+          <li>Click <b>Privacy &amp; Security</b> in the sidebar.</li>
+          <li>Scroll all the way down to <b>Security</b>. You'll see <b>“Sonomy” was blocked to protect your Mac.</b></li>
+          <li>Click <b>Open Anyway</b>, then confirm with your Mac's password or Touch ID.</li>
+          <li>One more box appears. Click <b>Open Anyway</b> there too.</li>
+        </ul>
+        <div class="shot" aria-hidden="true">
+          <div class="mac-pane">
+            <div class="ttl">Privacy &amp; Security</div>
+            <div class="grp">
+              <div class="lbl">Security</div>
+              <div class="row"><span>“Sonomy” was blocked to protect your Mac.</span><span class="k hl">Open Anyway</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="tip">No Open Anyway button? It only shows for about an hour after the warning. Double-click Sonomy again, then go straight back to this screen.</p>
+
+        <div class="aside">
+          <h4>On macOS 14 Sonoma or earlier, it's quicker</h4>
+          <p>In <b>Applications</b>, hold <b>Control</b> and click <b>Sonomy</b> (or right-click it). Choose <b>Open</b> from the menu, then click <b>Open</b> in the box that appears. The System Settings route above works too.</p>
+          <div class="shot" aria-hidden="true">
+            <div class="mac-menu"><div class="on">Open</div><div>Show Package Contents</div><hr><div>Move to Trash</div><hr><div>Get Info</div><div>Rename</div></div>
+          </div>
+        </div>
+        <p class="tip">Not sure which macOS you have? It's on the first line of About This Mac.</p>
+      </li>
+      <li>
+        <h3>Say yes to what it asks for.</h3>
+        <p>Sonomy now opens, and every time after that it opens like any other app. When macOS asks whether it may use the <b>microphone</b>, record <b>screen and system audio</b>, or find devices on your <b>local network</b>, click <b>Allow</b>: recording meetings and working with friends need those.</p>
+        <p class="tip">You can eject the Sonomy disk in Finder's sidebar and delete the .dmg file from Downloads.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ Windows -->
+  <section class="guide" id="windows" role="tabpanel" aria-labelledby="tab-windows">
+    <h2>On Windows</h2>
+    <p class="intro">You need Windows 10 (version 2004 or later) or Windows 11. You don't need an administrator password.</p>
+
+    <ol class="steps">
+      <li>
+        <h3>Download the installer.</h3>
+        <p>On the <a href="app.html#download">download section</a>, pick <b>Windows</b>. The file lands in your <b>Downloads</b> folder and ends in <b>setup.exe</b>.</p>
+      </li>
+      <li>
+        <h3>If your browser hesitates, keep the file.</h3>
+        <p>Some browsers say the file <b>isn't commonly downloaded</b>. In <b>Microsoft Edge</b>: open the downloads list, hover over the file, click the <b>three dots (…)</b>, choose <b>Keep</b>, then <b>Show more</b> and <b>Keep anyway</b>. In <b>Chrome</b>, click <b>Keep</b> or <b>Download anyway</b>.</p>
+      </li>
+      <li>
+        <h3>Open it, and see the blue warning.</h3>
+        <p>Double-click the setup file. A blue box says <b>Windows protected your PC</b>, with only a Don't run button. That's expected. Click the small <b>More info</b> link under the text.</p>
+        <div class="shot" aria-hidden="true">
+          <div class="smart">
+            <div class="t">Windows protected your PC</div>
+            Microsoft Defender SmartScreen prevented an unrecognised app from starting. Running this app might put your PC at risk.<br>
+            <u class="hl">More info</u>
+            <div class="btns"><span>Don't run</span></div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <h3>Click Run anyway.</h3>
+        <p>The box now shows the file's name and a second button. Click <b>Run anyway</b>.</p>
+        <div class="shot" aria-hidden="true">
+          <div class="smart">
+            <div class="t">Windows protected your PC</div>
+            Microsoft Defender SmartScreen prevented an unrecognised app from starting. Running this app might put your PC at risk.
+            <div class="meta">App: Sonomy-setup.exe<br>Publisher: Unknown publisher</div>
+            <div class="btns"><span class="hl">Run anyway</span><span>Don't run</span></div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <h3>Click through the installer.</h3>
+        <p>Keep the suggested folder, click <b>Install</b>, then <b>Finish</b>. On an older Windows 10 PC it may ask to fetch the <b>WebView2 Runtime</b> from Microsoft: click <b>Yes</b>, Sonomy needs it to draw its window.</p>
+      </li>
+      <li>
+        <h3>Open Sonomy Notes.</h3>
+        <p>It's in the <b>Start menu</b> as <b>Sonomy Notes</b>. If Windows asks whether to allow it on your network, allow it on <b>private networks</b>, so your computers can find each other. Windows asks for the microphone the first time you record.</p>
+      </li>
+    </ol>
+
+    <div class="aside">
+      <h4>“This app has been blocked for your protection” and no Run anyway?</h4>
+      <p>That's <b>Smart App Control</b>, which some new Windows 11 PCs have switched on. It blocks every app that hasn't paid for a Microsoft certificate and offers no button to continue. The only way past it is turning it off in <b>Windows Security › App &amp; browser control › Smart App Control</b>. Once off, Windows won't let you turn it back on without resetting the PC, so decide that for yourself.</p>
+    </div>
+  </section>
+
+  <section class="why done">
+    <h2>Why the warning?</h2>
+    <p>Apple and Microsoft show it for every app whose maker hasn't bought their yearly signing certificate. Sonomy hasn't. The warning is about who signed the file, not about what the app does.</p>
+    <p>You only do this once. Sonomy updates itself from inside the app, and every update is checked against its own signature before it's installed.</p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="mark" href="index.html"><img src="assets/icon.png" alt="" width="28" height="28"><span>Sonomy Notes</span></a>
+    <span class="fsp"></span>
+    <span>Version <span data-version>2.4.5 beta</span></span>
+    <a href="index.html">Why Sonomy</a>
+    <a href="app.html">The app</a>
+    <a href="how.html">How it works</a>
+    <a href="https://github.com/LarsLagauw/sonomy-releases/releases">All releases</a>
+    <a href="https://github.com/LarsLagauw/sonomy-releases/blob/main/EULA.md">Licence</a>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+/* The Mac / Windows switch. Opens on the visitor's own system, and #mac or
+   #windows in the link wins, so "here's how" can point straight at one. */
+(function () {
+  var tabs = document.querySelectorAll('.pick button');
+  function show(id) {
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute('aria-controls') === id;
+      tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+      document.getElementById(tabs[i].getAttribute('aria-controls')).hidden = !on;
+    }
+  }
+  var want = location.hash.slice(1);
+  if (want !== 'mac' && want !== 'windows') {
+    want = /Win/i.test(navigator.platform || '') || /Windows/i.test(navigator.userAgent) ? 'windows' : 'mac';
+  }
+  show(want);
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function () {
+      var id = this.getAttribute('aria-controls');
+      show(id);
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -194,7 +194,7 @@
     if (/Linux|X11/i.test(p) || /Linux/i.test(ua)) return 'linux';
     return null;
   }
-  var LABEL = { macos: 'macOS', windows: 'Windows', linux: 'Linux' };
+  var LABEL = { windows: 'Windows', linux: 'Linux' };
 
   function macIsArm() {
     try {
@@ -209,10 +209,12 @@
     } catch (err) { return true; }
   }
 
-  function pick(assets, os) {
-    var arm = os === 'macos' ? macIsArm() : false;
+  /* No "any macOS disk image" fallback: an Apple-chip build on an Intel Mac does not open,
+     so a missing Intel image is "see all releases", never the other one. Safari reports
+     "Apple GPU" on every Mac, which is why the button names the chip it picked. */
+  function pick(assets, os, arch) {
     var tests = {
-      macos: arm ? [/-macos-arm64\.dmg$/i, /-macos-.*\.dmg$/i] : [/-macos-x86_64\.dmg$/i, /-macos-.*\.dmg$/i],
+      macos: arch === 'x86_64' ? [/-macos-x86_64\.dmg$/i] : [/-macos-arm64\.dmg$/i],
       windows: [/-x86_64-setup\.exe$/i, /setup\.exe$/i, /\.exe$/i],
       linux: [/\.AppImage$/i]
     }[os] || [];
@@ -228,6 +230,10 @@
   function pretty(v) { return v.replace(/-beta$/i, ' beta').replace(/-rc/i, ' rc'); }
 
   var os = detect();
+  var arch = os === 'macos' ? (macIsArm() ? 'arm64' : 'x86_64') : null;
+  var label = os === 'macos'
+    ? (arch === 'arm64' ? 'Mac with Apple chip' : 'Mac with Intel chip')
+    : LABEL[os];
   var mainLabel = document.getElementById('cta-main-label');
   var get = document.getElementById('cta-get');
   var getLabel = document.getElementById('cta-get-label');
@@ -235,8 +241,8 @@
   var barBtn = document.getElementById('cta-bar');
 
   if (os) {
-    if (mainLabel) mainLabel.textContent = 'Download for ' + LABEL[os];
-    if (getLabel) getLabel.textContent = 'Download for ' + LABEL[os];
+    if (mainLabel) mainLabel.textContent = 'Download for ' + label;
+    if (getLabel) getLabel.textContent = 'Download for ' + label;
   }
 
   /* Every link already points at the releases page, so a failed API call costs nothing. */
@@ -251,7 +257,7 @@
       }
 
       document.querySelectorAll('.plat').forEach(function (row) {
-        var found = pick(assets, row.getAttribute('data-os'));
+        var found = pick(assets, row.getAttribute('data-os'), row.getAttribute('data-arch'));
         var file = row.querySelector('[data-file]');
         var go = row.querySelector('.go');
         var size = row.querySelector('[data-size]');
@@ -267,7 +273,7 @@
       });
 
       if (os) {
-        var asset = pick(assets, os);
+        var asset = pick(assets, os, arch);
         if (asset) {
           main.href = asset.browser_download_url;
           if (get) get.href = asset.browser_download_url;

@@ -163,9 +163,10 @@
       <a href="index.html">Why Sonomy</a>
       <a class="here" href="app.html">The app</a>
       <a href="how.html">How it works</a>
+      <a href="install.html">Install</a>
     </nav>
     <div class="bar-sp"></div>
-    <span class="ver" data-version>2.3.10 beta</span>
+    <span class="ver" data-version>2.4.5 beta</span>
     <a class="btn btn-sm btn-bar" id="cta-bar" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">Download</a>
   </div>
 </header>
@@ -242,7 +243,7 @@
             </div>
 
           </div>
-          <span class="a-ver" data-version>2.3.10 beta</span>
+          <span class="a-ver" data-version>2.4.5 beta</span>
         </div>
       </div>
       <div class="shot-fade" aria-hidden="true"></div>
@@ -305,7 +306,7 @@
               <span class="m-btn quiet">Cancel</span>
             </div>
           </div>
-          <span class="a-ver" data-version>2.3.10 beta</span>
+          <span class="a-ver" data-version>2.4.5 beta</span>
         </div>
       </div>
     </div>
@@ -345,7 +346,7 @@
               </div>
             </div>
           </div>
-          <span class="a-ver" data-version>2.3.10 beta</span>
+          <span class="a-ver" data-version>2.4.5 beta</span>
         </div>
       </div>
     </div>
@@ -388,7 +389,7 @@
               <div class="sl-item" style="--i:9"><span class="gl"><i data-g="photo"></i></span>Image</div>
             </div>
           </div>
-          <span class="a-ver" data-version>2.3.10 beta</span>
+          <span class="a-ver" data-version>2.4.5 beta</span>
         </div>
       </div>
     </div>
@@ -481,7 +482,7 @@
               </div>
             </div></div>
           </div>
-          <span class="a-ver" data-version>2.3.10 beta</span>
+          <span class="a-ver" data-version>2.4.5 beta</span>
         </div>
         <div class="finder" aria-hidden="true">
           <div class="fh"><span class="a-tl"><i></i><i></i><i></i></span>Notes</div>
@@ -516,7 +517,7 @@
         <li class="rv" style="--d:300ms"><button class="feat" data-pop="everywhere"><span class="g" data-g="laptopcomputer"></span><div><b>Mac, Windows and Linux</b><span>The same app on every desk.</span><em class="open">Read more</em></div></button></li>
         <li class="rv" style="--d:330ms"><button class="feat" data-pop="updates"><span class="g" data-g="arrow.down.circle"></span><div><b>Updates from friends</b><span>A newer version travels friend to friend.</span><em class="open">Read more</em></div></button></li>
         <li class="rv" style="--d:360ms"><button class="feat" data-pop="people"><span class="g" data-g="person.badge.plus"></span><div><b>Find people by name</b><span>Through friends of friends. No directory.</span><em class="open">Read more</em></div></button></li>
-        <li class="rv" style="--d:390ms"><button class="feat" data-pop="nearby"><span class="g" data-g="dot.radiowaves.left.and.right"></span><div><b>Works without a network</b><span>Bluetooth and direct Wi‑Fi in the same room.</span><em class="open">Read more</em></div></button></li>
+        <li class="rv" style="--d:390ms"><button class="feat" data-pop="nearby"><span class="g" data-g="dot.radiowaves.left.and.right"></span><div><b>Works without a network</b><span>Bluetooth in the same room, and direct Wi‑Fi between Macs.</span><em class="open">Read more</em></div></button></li>
         <li class="rv" style="--d:420ms"><button class="feat" data-pop="private"><span class="g" data-g="lock"></span><div><b>No account, no cloud</b><span>And nothing to subscribe to.</span><em class="open">Read more</em></div></button></li>
         <li class="rv" style="--d:450ms"><button class="feat" data-pop="dark"><span class="g" data-g="moon"></span><div><b>Dark mode and three sizes</b><span>Compact, regular or roomy.</span><em class="open">Read more</em></div></button></li>
       </ul>
@@ -537,11 +538,15 @@
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5v9m0 0 3.2-3.2M8 10.5 4.8 7.3M2 12v1.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V12"/></svg>
             <span id="cta-get-label">Download the latest version</span>
           </a>
-          <p class="req">macOS 15 (Sequoia) or later, Apple silicon and Intel. Windows 11. Linux as an AppImage. Sonomy is in beta, so expect the odd rough edge and frequent updates.</p>
+          <p class="req">macOS 11 (Big Sur) or later, on Macs with an Apple or Intel chip &mdash; on Big Sur and Monterey, with Safari updated to 16.4 or later. Windows 10 (version 2004 or later) or Windows 11. Linux as an AppImage. Sonomy is in beta, so expect the odd rough edge and frequent updates. Intel Macs and macOS before 15 are the least tested and may see more bugs. New to installing apps from the web? <a href="install.html">Here is every click, step by step.</a></p>
         </div>
         <div class="plats" id="plats">
-          <a class="plat" data-os="macos" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
-            <div><div class="os">macOS</div><div class="file" data-file>Disk image. Drag it to Applications.</div></div>
+          <a class="plat" data-os="macos" data-arch="arm64" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+            <div><div class="os">Mac with Apple chip</div><div class="file" data-file>Disk image. Drag it to Applications.</div></div>
+            <span class="go">Download<b data-size></b></span>
+          </a>
+          <a class="plat" data-os="macos" data-arch="x86_64" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
+            <div><div class="os">Mac with Intel chip</div><div class="file" data-file>Disk image. Drag it to Applications.</div></div>
             <span class="go">Download<b data-size></b></span>
           </a>
           <a class="plat" data-os="windows" href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">
@@ -563,9 +568,10 @@
   <div class="wrap foot-in">
     <a class="mark" href="#top"><img src="assets/icon.png" alt="" width="28" height="28"><span>Sonomy Notes</span></a>
     <span class="fsp"></span>
-    <span>Version <span data-version>2.3.10 beta</span></span>
+    <span>Version <span data-version>2.4.5 beta</span></span>
     <a href="index.html">Why Sonomy</a>
     <a href="how.html">How it works</a>
+    <a href="install.html">Install help</a>
     <a href="https://github.com/LarsLagauw/sonomy-releases/releases">All releases</a>
     <a href="https://github.com/LarsLagauw/sonomy-releases/releases/latest">What's new</a>
     <a href="https://github.com/LarsLagauw/sonomy-releases/blob/main/EULA.md">Licence</a>
