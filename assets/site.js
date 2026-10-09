@@ -1,4 +1,4 @@
-/* Sonomy Notes — the site's one script. Shared by index.html and how.html.
+/* Synomy Notes — the site's one script. Shared by index.html and how.html.
 
    Nothing here is needed to read the page: every reveal starts visible without
    scripting (see .rv in site.css), every popup's text is in the document, and
@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  var REPO = 'LarsLagauw/sonomy-releases';
+  var REPO = 'LarsLagauw/synomy-releases';
   var RELEASES = 'https://github.com/' + REPO + '/releases/latest';
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
